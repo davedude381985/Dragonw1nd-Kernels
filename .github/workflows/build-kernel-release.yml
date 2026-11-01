@@ -294,10 +294,26 @@ jobs:
         id: _modules
         uses: ./.github/kernel_modules
 
+              - name: OnePlus 11 OOS16 compatibility fixes
+        if: matrix.model == 'OP11'
+        shell: bash
+        run: |
+          set -e
+
+          RTW="salami-oos16/kernel_platform/msm-kernel/drivers/net/wireless/realtek/rtw88/main.c"
+
+          echo "Patching RTW88 for Android 5.15..."
+          grep -n "device_get_mac_address" "$RTW" || true
+
+          sed -i 's/if (device_get_mac_address(rtwdev->dev, efuse->addr))/if (1)/' "$RTW"
+
+          echo "RTW88 patch complete."
+
       - name: Start build
         id: build
         uses: ./.github/build
         env:
+        KCFLAGS: "-Who-error=frame-larger-than"
           CCACHE_BASEDIR: ${{ github.workspace }}
           CCACHE_COMPILERCHECK: "content"
           CCACHE_NOHASHDIR: "true"
