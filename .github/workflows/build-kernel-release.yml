@@ -294,7 +294,7 @@ jobs:
         id: _modules
         uses: ./.github/kernel_modules
 
-              - name: OnePlus 11 OOS16 compatibility fixes
+      - name: OnePlus 11 OOS16 compatibility fixes
         if: matrix.model == 'OP11'
         shell: bash
         run: |
