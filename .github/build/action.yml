@@ -369,7 +369,13 @@ runs:
           echo "Patching RTW88 device_get_mac_address incompatibility"
           sed -i 's/if (device_get_mac_address(rtwdev->dev, efuse->addr))/if (1)/' "$RTW"
         fi
-        
+         # OnePlus 11 OOS16 zsmalloc MAX macro compatibility fix
+        ZSMALLOC="${ROOT_DIR}/msm-kernel/mm/oplus_mm/thp_zsmalloc/zsmalloc.c"
+
+        if [[ -f "$ZSMALLOC" ]] && grep -q '^#define MAX(a, b)' "$ZSMALLOC"; then
+          echo "Removing duplicate MAX macro from zsmalloc"
+          sed -i '/^#define MAX(a, b)/d' "$ZSMALLOC"
+        fi
         export KERNEL_DIR="common"
 
         # Allow build.config to override MAKE_FLAGS
